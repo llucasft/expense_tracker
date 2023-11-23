@@ -30,6 +30,9 @@ def add_expense():
     amount = request.form['amount']
     category = request.form['category']
     print(date + ' ' + expense_name + ' ' + amount + ' ' + category)
+    expense = Expense(date=date, expense_name=expense_name, amount=amount, category=category)
+    db.session.add(expense)
+    db.session.commit()
     return redirect("/")
 
 if __name__ == '__main__':
