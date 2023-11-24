@@ -33,12 +33,41 @@ def add_expense():
     expense = Expense(date=date, expense_name=expense_name, amount=amount, category=category)
     db.session.add(expense)
     db.session.commit()
-    return redirect("/")
+    return redirect("/expenses")
 
 @app.route("/expenses")
 def expenses():
     expenses = Expense.query.all()
     return render_template('expenses.html', expenses=expenses)
+
+@app.route("/delete/<int:id>")
+def delete(id):
+    expense = Expense.query.filter_by(id=id).first()
+    db.session.delete(expense)
+    db.session.commit()
+    return redirect("/expenses")
+
+@app.route('/updateexpense/<int:id>')
+def updateexpense(id):
+    expense = Expense.query.filter_by(id=id).first()
+    return render_template('updateexpense.html', expense=expense)
+
+@app.route('/edit', methods=['POST'])
+def edit():
+    id = request.form['id']
+    date = request.form['date']
+    expense_name = request.form['expensename']
+    amount = request.form['amount']
+    category = request.form['category']
+
+    expense = Expense.query.filter_by(id=id).first()
+    expense.date = date
+    expense.expense_name = expense_name
+    expense.amount = amount
+    expense.category = category
+
+    db.session.commit()
+    return redirect('/expenses')
 
 if __name__ == '__main__':
     app.run(debug=True)
